@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista - Sistema de Pessoas</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <h1 class="logo">Gestão de Pessoas</h1>
+            <nav class="nav">
+                <a href="cadastro.html" class="nav-link">Cadastro</a>
+                <a href="lista.html" class="nav-link active">Lista</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="container">
+            <section class="list-section">
+                <div class="section-header">
+                    <h2>Contatos Cadastrados</h2>
+                    <p class="subtitle">Visualize todos os contatos cadastrados no sistema</p>
+                </div>
+
+                <div id="loading" class="loading">Carregando dados...</div>
+                
+                <div id="empty-state" class="empty-state" style="display: none;">
+                    <p>Nenhum contato cadastrado ainda</p>
+                </div>
+
+                <div class="table-wrapper">
+                    <table id="tabela-pessoas" class="table">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Email</th>
+                                <th>Telefone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dados serão preenchidos via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 Sistema de Gestão de Pessoas. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        window.onload = async () => {
+            try {
+                const response = await fetch('/pessoas');
+                const pessoas = await response.json();
+                
+                const tbody = document.querySelector('#tabela-pessoas tbody');
+                const loadingDiv = document.getElementById('loading');
+                const emptyState = document.getElementById('empty-state');
+                const table = document.getElementById('tabela-pessoas');
+                
+                loadingDiv.style.display = 'none';
+                
+                if (pessoas.length === 0) {
+                    emptyState.style.display = 'block';
+                    table.style.display = 'none';
+                } else {
+                    tbody.innerHTML = pessoas.map(pessoa => `
+                        <tr>
+                            <td>${pessoa.nome}</td>
+                            <td>${pessoa.email}</td>
+                            <td>${pessoa.telefone || '-'}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (error) {
+                document.getElementById('loading').innerHTML = 'Erro ao carregar dados';
+                console.error('Erro:', error);
+            }
+        };
+    </script>
+</body>
+</html>
